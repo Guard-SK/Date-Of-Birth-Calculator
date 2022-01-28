@@ -26,12 +26,10 @@ class MainActivity : AppCompatActivity() {
         btnSelectDate.setOnClickListener {
             clickDatePicker()
         }
-
-
     }
 
     @SuppressLint("SetTextI18n")
-    fun clickDatePicker(){
+    private fun clickDatePicker(){
         val myCalendar = Calendar.getInstance()
         var year = myCalendar.get(Calendar.YEAR)
         var month = myCalendar.get(Calendar.MONTH)
@@ -46,23 +44,27 @@ class MainActivity : AppCompatActivity() {
             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.GERMAN)
 
             val theDate = sdf.parse(selectedDate)
+            theDate?.let {
+                val selectedDateInMinutes = theDate.time / 60000
 
-            val selectedDateInMinutes = theDate.time / 60000
+                val currentDate = sdf.parse(sdf.format(System.currentTimeMillis()))
+                currentDate?.let {
+                    val currentDateInMinutes = currentDate.time / 60000
 
-            val currentDate = sdf.parse(sdf.format(System.currentTimeMillis()))
+                    val differenceInMinutes = currentDateInMinutes - selectedDateInMinutes
 
-            val currentDateInMinutes = currentDate.time / 60000
-
-            val differenceInMinutes = currentDateInMinutes - selectedDateInMinutes
-
-            if (differenceInMinutes>=52596000) {
-                tvAgeInMinutes?.text = "${differenceInMinutes.toString()}, Boomer!"
-            }
-            else if (differenceInMinutes>=0) {
-                tvAgeInMinutes?.text = differenceInMinutes.toString()
-            }
-            else {
-                tvAgeInMinutes?.text = "Error! Else method that shouldn't be called was called! Contact support!"
+                    when {
+                        differenceInMinutes>=52596000 -> {
+                            tvAgeInMinutes?.text = "${differenceInMinutes.toString()}, Boomer!"
+                        }
+                        differenceInMinutes>=0 -> {
+                            tvAgeInMinutes?.text = differenceInMinutes.toString()
+                        }
+                        else -> {
+                            tvAgeInMinutes?.text = "Error! Else method that shouldn't be called was called! Contact support!"
+                        }
+                    }
+                }
             }
         }, year, month, day)
 
